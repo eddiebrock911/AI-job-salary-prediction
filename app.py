@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 from sklearn.preprocessing import LabelEncoder
+import requests
 import os
 
 # streamlit run app.py
@@ -18,6 +19,7 @@ st.markdown("Enter job details below to predict the estimated salary in USD.")
 DATA_PATH = "ai_job_dataset.csv"
 MODEL_ID = "1rtjMiGmBGKmeVtB05HfJolnnivcJCyGy"
 MODEL_PATH = f"https://drive.google.com/uc?id={MODEL_ID}"
+
 
 @st.cache_data
 def load_data_and_encoders():
