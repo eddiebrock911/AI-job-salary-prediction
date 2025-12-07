@@ -4,6 +4,8 @@ import joblib
 from sklearn.preprocessing import LabelEncoder
 import os
 
+# streamlit run app.py
+
 # Set page config
 st.set_page_config(page_title="AI Job Salary Predictor", layout="wide", page_icon="🤖")
 
@@ -12,8 +14,10 @@ st.title("🤖 AI Job Salary Predictor")
 st.markdown("Enter job details below to predict the estimated salary in USD.")
 
 # Paths
-DATA_PATH = 'ai_job_dataset.csv'
-MODEL_PATH = 'salary_predictor_model.pkl'
+#  MODEL_URL = "https://drive.google.com/uc?export=download&id=1rtjMiGmBGKmeVtB05HfJolnnivcJCyGy"
+DATA_PATH = "ai_job_dataset.csv"
+MODEL_ID = "1rtjMiGmBGKmeVtB05HfJolnnivcJCyGy"
+MODEL_PATH = f"https://drive.google.com/uc?id={MODEL_ID}"
 
 @st.cache_data
 def load_data_and_encoders():

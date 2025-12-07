@@ -1,0 +1,6 @@
+# Core libraries
+numpy==2.3.3
+pandas==2.3.2
+scikit-learn==1.7.2
+streamlit==1.50.0
+xgboost==3.0.5
