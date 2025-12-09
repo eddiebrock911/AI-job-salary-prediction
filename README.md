@@ -101,9 +101,6 @@ Make sure these exist in the same folder:
 
 ---
 
-## ❤️ Credits
-
-Made by Ankit.
 
 ---
 
