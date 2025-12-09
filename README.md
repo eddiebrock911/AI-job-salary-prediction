@@ -6,7 +6,7 @@ A Streamlit web application that predicts the estimated salary (in USD) for AI-r
 
 ## ❤️ Credits
 
-Made by Ankit.
+Made by Ankit. [Instagram](https://www.instagram.com/__ankit._.op_/)
 
 ---
 
