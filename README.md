@@ -43,10 +43,10 @@ Install dependencies:
 pip install streamlit pandas scikit-learn joblib
 ```
 
-Optional:
+Yah:
 
 ```bash
-pip install numpy
+pip install requirements.txt
 ```
 
 ---
