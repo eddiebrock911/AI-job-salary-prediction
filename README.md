@@ -4,6 +4,12 @@ A Streamlit web application that predicts the estimated salary (in USD) for AI-r
 
 ---
 
+## ❤️ Credits
+
+Made by Ankit.
+
+---
+
 ## 🚀 Overview
 
 This app loads a trained machine learning model, takes user inputs for job attributes, encodes them, and predicts salary. It includes:
