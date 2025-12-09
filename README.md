@@ -106,8 +106,3 @@ Make sure these exist in the same folder:
 * `salary_predictor_model.pkl`
 
 ---
-
-
----
-
-If you want, I can also generate a **GitHub-ready README**, `.gitignore`, or folder structure for deployment.
