@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 from sklearn.preprocessing import LabelEncoder
-import requests
 import os
 
 # streamlit run app.py
@@ -15,11 +14,8 @@ st.title("🤖 AI Job Salary Predictor")
 st.markdown("Enter job details below to predict the estimated salary in USD.")
 
 # Paths
-#  MODEL_URL = "https://drive.google.com/uc?export=download&id=1rtjMiGmBGKmeVtB05HfJolnnivcJCyGy"
 DATA_PATH = "ai_job_dataset.csv"
-MODEL_ID = "1rtjMiGmBGKmeVtB05HfJolnnivcJCyGy"
-MODEL_PATH = f"https://drive.google.com/uc?id={MODEL_ID}"
-
+MODEL_PATH = "salary_predictor_model.pkl"
 
 @st.cache_data
 def load_data_and_encoders():
@@ -48,15 +44,16 @@ def load_data_and_encoders():
         encoders[col] = le
     
     # Get feature statistics for input validation
-    feature_stats = {
-        col: {
+    numerical_cols = X_raw.select_dtypes(include=['number']).columns
+    feature_stats = {}
+    
+    for col in numerical_cols:
+        feature_stats[col] = {
             'min': float(X_raw[col].min()),
             'max': float(X_raw[col].max()),
             'mean': float(X_raw[col].mean()),
             'median': float(X_raw[col].median())
         }
-        for col in X_raw.select_dtypes(include=['number']).columns
-    }
     
     return X_raw.columns.tolist(), encoders, feature_stats
 
@@ -72,7 +69,7 @@ def load_model():
 feature_columns, encoders, feature_stats = load_data_and_encoders()
 model = load_model()
 
-if feature_columns is not None and model is not None:
+if feature_columns is not None and encoders is not None and model is not None:
     # Create Input Form
     st.sidebar.header("📝 Input Features")
     st.sidebar.markdown("Fill in all fields to predict salary")
@@ -88,7 +85,6 @@ if feature_columns is not None and model is not None:
         if col in encoders:
             # Categorical feature - Dropdown
             options = sorted(list(encoders[col].classes_))
-            # Format column name for display
             display_name = col.replace('_', ' ').title()
             user_input[col] = container.selectbox(
                 f"{display_name}", 
@@ -96,7 +92,7 @@ if feature_columns is not None and model is not None:
                 key=col,
                 help=f"Select the {display_name.lower()}"
             )
-        else:
+        elif col in feature_stats:
             # Numerical feature - Number Input
             stats = feature_stats[col]
             display_name = col.replace('_', ' ').title()
@@ -104,9 +100,17 @@ if feature_columns is not None and model is not None:
                 f"{display_name}", 
                 min_value=stats['min'], 
                 max_value=stats['max'], 
-                value=stats['median'],  # Use median as default (more robust than mean)
+                value=stats['median'],
                 key=col,
                 help=f"Range: {stats['min']:.2f} - {stats['max']:.2f}"
+            )
+        else:
+            # Fallback for unexpected column types
+            display_name = col.replace('_', ' ').title()
+            user_input[col] = container.text_input(
+                f"{display_name}",
+                key=col,
+                help=f"Enter {display_name.lower()}"
             )
 
     # Add some spacing
@@ -139,35 +143,41 @@ if feature_columns is not None and model is not None:
                 
                 # Create metrics display
                 metric_col1, metric_col2, metric_col3 = st.columns(3)
-                with metric_col2:
+                
+                with metric_col1:
                     st.metric(
                         label="Estimated Annual Salary",
                         value=f"${prediction:,.0f}",
                         help="Predicted salary in USD"
                     )
+                
+                with metric_col2:
                     st.metric(
                         label="Estimated Monthly Salary",
                         value=f"${prediction/12:,.0f}",
-                        help="Predicted salary in USD"
+                        help="Monthly breakdown"
                     )
                     st.metric(
                         label="Estimated Weekly Salary",
                         value=f"${prediction/52:,.0f}",
-                        help="Predicted salary in USD"
+                        help="Weekly breakdown"
                     )
+                
+                with metric_col3:
                     st.metric(
                         label="Estimated Daily Salary",
                         value=f"${prediction/260:,.0f}",
-                        help="Predicted salary in USD"
+                        help="Daily breakdown (260 working days)"
                     )
                     st.metric(
                         label="Estimated Hourly Salary",
-                        value=f"${prediction/260/40:,.0f}",
-                        help="Predicted salary in USD"
+                        value=f"${prediction/(260*8):,.2f}",
+                        help="Hourly breakdown (8 hour workday)"
                     )
-                   
+                
                 # Optional: Show confidence interval or additional info
                 st.info("💡 **Note**: This is an estimate based on historical data. Actual salaries may vary based on negotiation, location, and market conditions.")
+                st.balloons()
                 
             except Exception as e:
                 st.error(f"❌ Error during prediction: {str(e)}")
